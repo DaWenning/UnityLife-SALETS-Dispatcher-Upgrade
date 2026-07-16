@@ -20,11 +20,11 @@
 
 
 /* Red */
-.p-card.p-component.cursor-zoom:has(.d-flex > .w-25.border-right) .w-100 > div.text-center {
+div#nav-home div.p-card.p-component:has(.d-flex > .w-25.border-right) .w-100 > div.text-center {
     background-color: rgba(192,0,0,0.6) !important;
 }
 
 /* Green when at least one child div exists */
-.p-card.p-component.cursor-zoom:has(.d-flex > .w-25.border-right > div) .w-100 > div.text-center {
+div#nav-home div.p-card.p-component:has(.d-flex > .w-25.border-right > div) .w-100 > div.text-center {
     background-color: rgba(0,255,0,0.6) !important;
 }

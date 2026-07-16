@@ -71,13 +71,17 @@ function updateCards() {
         const [, d, m, y, h, min] = match;
         const start = new Date(y, m - 1, d, h, min);
 
-        const overdue = (Date.now() - start.getTime()) > 5 * 60 * 1000;
+        const overdueThree = (Date.now() - start.getTime()) > 3 * 60 * 1000;
+        const overdueFive = (Date.now() - start.getTime()) > 5 * 60 * 1000;
+
 
         const header = card.querySelector('.w-50.border-right div.background-grey.rounded');
         if (header) {
-            header.style.backgroundColor = overdue
+            header.style.backgroundColor = overdueFive
                 ? 'rgba(192,0,0,0.6)'
-                : 'rgba(0,255,0,0.6)';
+                : overdueThree
+                ? 'rgba(255,165,0,0.6)'
+                : '#20262e';
         }
         console.log(match, card, header)
     });
