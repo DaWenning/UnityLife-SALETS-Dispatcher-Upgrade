@@ -1,0 +1,30 @@
+/* Type your CSS code here. */
+.pd-10-10 {}
+.pd-10-20 {}
+.pd-10-30 {}
+.pd-10-33 {}
+.pd-10-34 {}
+.pd-10-35 {}
+.pd-10-36 {}
+.pd-10-38 {}
+.pd-10-40 {}
+.pd-10-50 {}
+.pd-10-55 {}
+.pd-10-60 {}
+.pd-10-70 {}
+.pd-10-77 {}
+.pd-10-80 {}
+.pd-10-88 {}
+.pd-10-90 {}
+.pd-10-99 {}
+
+
+/* Red */
+.p-card.p-component.cursor-zoom:has(.d-flex > .w-25.border-right) .w-100 > div.text-center {
+    background-color: rgba(192,0,0,0.6) !important;
+}
+
+/* Green when at least one child div exists */
+.p-card.p-component.cursor-zoom:has(.d-flex > .w-25.border-right > div) .w-100 > div.text-center {
+    background-color: rgba(0,255,0,0.6) !important;
+}
