@@ -1,6 +1,7 @@
 // Type your JavaScript code here.
 const body = document.body;
-const observer = new MutationObserver((event) => mutationCallback(event));
+const dispatchObserver = new MutationObserver((event) => dispatchMutationCallback(event));
+const dialogObserver = new MutationObserver((event) => dialogMutationCallback(event));
 
 const titleRegex = /<h5\s+data-v-.{8}="">(.*?)<\/h5>/
 console.log("[RG] INJECTING ... ")
@@ -8,7 +9,7 @@ console.log("[RG] INJECTING ... ")
 waitForElement('#nav-home', (el) => {
   
   const dispatchNavigation = document.querySelector('#nav-home');
-  observer.observe(dispatchNavigation, {childList: true, characterData: false, subtree: false});
+  dispatchObserver.observe(dispatchNavigation, {childList: true, characterData: false, subtree: false});
 
   console.log("Sidebar loaded ... Injecting Dispatcher Changes")
 
@@ -24,7 +25,7 @@ waitForElement('#nav-home', (el) => {
 
 });
 
-function mutationCallback(event) {
+function dispatchMutationCallback(event) {
     //console.log("MutationCallback", event);
     for (let i in event) {
         let record = event[i];
@@ -41,6 +42,10 @@ function mutationCallback(event) {
             newNode.classList.add("pd-" + policeCode)
         }
     }
+}
+
+function dialogMutationCallback(event) {
+
 }
 
 function waitForElement(selector, callback) {
@@ -83,6 +88,5 @@ function updateCards() {
                 ? 'rgba(255,165,0,0.6)'
                 : '#20262e';
         }
-        console.log(match, card, header)
     });
 }
