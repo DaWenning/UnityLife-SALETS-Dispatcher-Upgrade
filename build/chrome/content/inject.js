@@ -3,8 +3,14 @@ const body = document.body;
 const dispatchObserver = new MutationObserver((event) => dispatchMutationCallback(event));
 const dialogObserver = new MutationObserver((event) => dialogMutationCallback(event));
 
+const carObserver = new MutationObserver((event) => { lastUpdate = new Date(); });
+
 const titleRegex = /<h5\s+data-v-.{8}="">(.*?)<\/h5>/
 console.log("[RG] INJECTING ... ")
+
+let lastUpdate = null;
+
+
 
 waitForElement('#nav-home', (el) => {
   
@@ -13,6 +19,34 @@ waitForElement('#nav-home', (el) => {
 
   const dialogHeader = document.querySelector("#app div.w-100 div.d-flex div");
   dialogObserver.observe(dialogHeader, {childList: true, characterData: false, subtree: false});
+
+  const carHeader = document.querySelector("#app div.w-100 div.d-flex div div.vue2leaflet-map div.leaflet-pane div.leaflet-pane.leaflet-marker-pane");
+  if (!carHeader) {
+    console.error("Car Header not found .. possible dutyshow ?");
+  }
+  else {
+    carObserver.observe(carHeader, {childList: true, characterData: false, subtree: false});
+    lastUpdate = new Date();
+    setInterval(() => {
+        if (lastUpdate && (new Date() - lastUpdate) > 3 * 60 * 1000) {
+        console.log("No updates from car observer in the last 3 minutes");
+            let noUpdateWarning = document.createElement("div");
+            noUpdateWarning.textContent = "SALETS scheint seit 3 Minuten keine Änderung empfangen zu haben.\nBitte Lade die Seite neu!";
+            noUpdateWarning.style.position = "fixed";
+            noUpdateWarning.style.top = "10px";
+            noUpdateWarning.style.right = "10px";
+            noUpdateWarning.style.backgroundColor = "red";
+            noUpdateWarning.style.border = "4px solid darkred";
+            noUpdateWarning.style.borderRadius = "8px";
+            noUpdateWarning.style.color = "white";
+            noUpdateWarning.style.padding = "10px";
+            noUpdateWarning.style.zIndex = "10000";
+            noUpdateWarning.style.whiteSpace = "pre-line";
+            document.body.appendChild(noUpdateWarning);
+        
+        }
+    }, 10000);
+  }
 
   console.log("Sidebar loaded ... Injecting Dispatcher Changes")
 
@@ -23,25 +57,20 @@ waitForElement('#nav-home', (el) => {
   updateCards();
 
   // Then every 10 seconds
-  setInterval(updateCards, 1000);
-
-
+  setInterval(updateCards, 1000);  
 });
 
+
 function dispatchMutationCallback(event) {
-    //console.log("MutationCallback", event);
     for (let i in event) {
         let record = event[i];
         //console.log("Record", record);
         if (record.type == "childList" && record.addedNodes.length > 0) {
             let newNode = record.addedNodes[0];
-//            console.log("Got new Dispatch", newNode)
             let title = newNode.innerHTML.match(titleRegex)[1];
             let policeCode = "10-00";
             if (title.includes("(") && title.includes(")"))
                 policeCode = title.split("(")[1].split(")")[0];
-//            console.log(title, policeCode)
-
             newNode.classList.add("pd-" + policeCode)
         }
     }

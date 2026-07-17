@@ -75,6 +75,34 @@ function New-Crx {
     return $true
 }
 
+function Update-ManifestVersion {
+    param(
+        [string]$ManifestPath,
+        [string]$NewVersion
+    )
+
+    if (-not (Test-Path -Path $ManifestPath -PathType Leaf)) {
+        Write-Warning "Manifest not found: $ManifestPath"
+        return $false
+    }
+
+    try {
+        $content = Get-Content -Path $ManifestPath -Raw -Encoding UTF8
+        $manifest = $content | ConvertFrom-Json
+
+        $manifest.version = $NewVersion
+
+        $updatedContent = $manifest | ConvertTo-Json -Depth 10
+        Set-Content -Path $ManifestPath -Value $updatedContent -Encoding UTF8 -NoNewline
+        Write-Host "Updated version to $NewVersion in: $ManifestPath"
+        return $true
+    }
+    catch {
+        Write-Warning "Failed to update manifest: $ManifestPath - $_"
+        return $false
+    }
+}
+
 if (-not (Test-Path -Path $BuildRoot -PathType Container)) {
     throw "Build folder not found: $BuildRoot"
 }
@@ -83,6 +111,14 @@ $targets = Get-ChildItem -Path $BuildRoot -Directory
 if (-not $targets) {
     throw "No build targets found in: $BuildRoot"
 }
+
+# Update manifest versions in all build targets
+Write-Host "Updating manifest versions to $Version..."
+foreach ($target in $targets) {
+    $manifestPath = Join-Path $target.FullName "manifest.json"
+    Update-ManifestVersion -ManifestPath $manifestPath -NewVersion $Version
+}
+Write-Host ""
 
 New-Item -ItemType Directory -Path $OutputRoot -Force | Out-Null
 New-Item -ItemType Directory -Path $KeyRoot -Force | Out-Null
