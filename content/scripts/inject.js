@@ -23,7 +23,7 @@ waitForElement('#nav-home', (el) => {
   updateCards();
 
   // Then every 10 seconds
-  setInterval(updateCards, 10 * 1000);
+  setInterval(updateCards, 1000);
 
 
 });
