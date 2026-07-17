@@ -8,7 +8,7 @@
 
   "content_scripts": [
     {
-      "matches": ["https://authority.ulife.me/pd/dutyshow", "https://authority.ulife.me/pd/controlcenter"],
+      "matches": ["https://authority.ulife.me/pd/dutyshow", "https://authority.ulife.me/pd/controlcenter", "https://trainingauthority.ulife.me/*"],
       "js": ["content/inject.js"],
       "css": ["content/inject.css"],
       "run_at": "document_idle"
