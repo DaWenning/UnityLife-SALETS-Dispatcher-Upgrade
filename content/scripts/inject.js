@@ -20,17 +20,23 @@ waitForElement('#nav-home', (el) => {
   const dialogHeader = document.querySelector("#app div.w-100 div.d-flex div");
   dialogObserver.observe(dialogHeader, {childList: true, characterData: false, subtree: false});
 
-  const carHeader = document.querySelector("#app div.w-100 div.d-flex div div.vue2leaflet-map div.leaflet-pane div.leaflet-pane.leaflet-marker-pane");
+  let carHeader = document.querySelector("#app div.w-100 div.d-flex div div.vue2leaflet-map div.leaflet-pane div.leaflet-pane.leaflet-marker-pane");
+  if (!carHeader) { // dutyShow
+    carHeader = document.querySelector("#app div.w-100 div.w-100 div.vue2leaflet-map div.leaflet-pane div.leaflet-pane.leaflet-marker-pane");
+  }
   if (!carHeader) {
-    console.error("Car Header not found .. possible dutyshow ?");
+    console.error("Car Header not found ");
   }
   else {
     carObserver.observe(carHeader, {childList: true, characterData: false, subtree: false});
     lastUpdate = new Date();
     setInterval(() => {
+        // console.log("Last update received at: ", lastUpdate);
         if (lastUpdate && (new Date() - lastUpdate) > 3 * 60 * 1000) {
-        console.log("No updates from car observer in the last 3 minutes");
+            console.log("No updates from car observer in the last 3 minutes");
+            if (document.querySelector("#no-update-warning")) return;
             let noUpdateWarning = document.createElement("div");
+            noUpdateWarning.id = "no-update-warning";
             noUpdateWarning.textContent = "SALETS scheint seit 3 Minuten keine Änderung empfangen zu haben.\nBitte Lade die Seite neu!";
             noUpdateWarning.style.position = "fixed";
             noUpdateWarning.style.top = "10px";
@@ -67,6 +73,8 @@ function dispatchMutationCallback(event) {
         //console.log("Record", record);
         if (record.type == "childList" && record.addedNodes.length > 0) {
             let newNode = record.addedNodes[0];
+
+            if (!newNode || !newNode.innerHTML) return;
             let title = newNode.innerHTML.match(titleRegex)[1];
             let policeCode = "10-00";
             if (title.includes("(") && title.includes(")"))
@@ -82,6 +90,8 @@ function dialogMutationCallback(event) {
         let record = event[i];
         if (record.type == "childList" && record.addedNodes.length > 0) {
             let dialog = record.addedNodes[0];
+
+            if (! dialog ) return;
             //console.log("Possible Dialog", dialog);
             let content = dialog.querySelector("div.p-dialog-content div");
             let infoInput = content.querySelector("div.d-flex div.w-50.p-1 div.p-inputgroup input");
